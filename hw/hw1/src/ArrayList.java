@@ -30,7 +30,7 @@ public class ArrayList<T> implements ArrayListInterface<T> {
             throw new IndexOutOfBoundsException();
         }
         if (size == backingArray.length) {
-            T[] newBacking = (T[])(new Object[2 * size]);
+            T[] newBacking = (T[]) (new Object[2 * size]);
             for (int i = 0; i < size; i++) {
                 newBacking[i] = backingArray[i];
             }
@@ -99,7 +99,7 @@ public class ArrayList<T> implements ArrayListInterface<T> {
 
     @Override
     public void clear() {
-        backingArray = (T[])(new Object[INITIAL_CAPACITY]);
+        backingArray = (T[]) (new Object[INITIAL_CAPACITY]);
         size = 0;
     }
 
