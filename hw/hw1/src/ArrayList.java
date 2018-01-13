@@ -24,19 +24,25 @@ public class ArrayList<T> implements ArrayListInterface<T> {
     @Override
     public void addAtIndex(int index, T data) {
         if (data == null) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (index < 0 || index > size) {
             throw new IllegalArgumentException();
         }
-        if (++size == backingArray.length) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (size == backingArray.length) {
             T[] newBacking = (T[])(new Object[2 * size]);
             for (int i = 0; i < size; i++) {
                 newBacking[i] = backingArray[i];
             }
             backingArray = newBacking;
         }
+        if (index < size) {
+            for (int i = size - 1; i >= index; i--) {
+                backingArray[i + 1] = backingArray[i];
+            }
+        }
         backingArray[index] = data;
+        size++;
     }
 
     @Override
@@ -59,6 +65,7 @@ public class ArrayList<T> implements ArrayListInterface<T> {
             backingArray[i - 1] = backingArray[i];
         }
         backingArray[size - 1] = null;
+        size--;
         return element;
     }
 
