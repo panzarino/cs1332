@@ -51,11 +51,8 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
 
     @Override
     public T removeAtIndex(int index) {
-        if (index < 0 || index > size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Invalid index provided.");
-        }
-        if (size == 0) {
-            return null;
         }
         if (index == 0) {
             if (size == 1) {
@@ -83,11 +80,17 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
 
     @Override
     public T removeFromFront() {
+        if (size == 0) {
+            return null;
+        }
         return removeAtIndex(0);
     }
 
     @Override
     public T removeFromBack() {
+        if (size == 0) {
+            return null;
+        }
         return removeAtIndex(size - 1);
     }
 
@@ -127,7 +130,7 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
         Object[] array = new Object[size];
         LinkedListNode<T> current = head;
         for (int i = 0; i < size; i++) {
-            array[i] = current;
+            array[i] = current.getData();
             current = current.getNext();
         }
         return array;
