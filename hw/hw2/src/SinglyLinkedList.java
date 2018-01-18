@@ -54,6 +54,23 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Invalid index provided.");
         }
+        if (size == 0) {
+            return null;
+        }
+        if (index == 0) {
+            if (size == 1) {
+                T value = head.getData();
+                head = null;
+                size--;
+                return value;
+            }
+            T value = head.getData();
+            T first = head.getNext().getData();
+            head.setData(first);
+            head.setNext(head.getNext().getNext());
+            size--;
+            return value;
+        }
         LinkedListNode<T> current = head;
         for (int i = 0; i < index - 1; i++) {
             current = current.getNext();
@@ -71,7 +88,7 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
 
     @Override
     public T removeFromBack() {
-        return removeAtIndex(size);
+        return removeAtIndex(size - 1);
     }
 
     @Override
@@ -80,8 +97,8 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
             throw new IllegalArgumentException("Data can not be null.");
         }
         Integer last = null;
-        LinkedListNode<T> current = head.getNext();
-        for (int i = 0; i <= size; i++) {
+        LinkedListNode<T> current = head;
+        for (int i = 0; i < size; i++) {
             if (current.getData().equals(data)) {
                 last = i;
             }
