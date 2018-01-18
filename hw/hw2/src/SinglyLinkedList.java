@@ -25,14 +25,14 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
             size++;
             return;
         }
-        if (index == size) {
-            head.setNext(new LinkedListNode<T>(data, head.getNext()));
-            head = head.getNext();
+        if (index == 0) {
+            head.setNext(new LinkedListNode<T>(head.getData(), head.getNext()));
+            head.setData(data);
             size++;
             return;
         }
         LinkedListNode<T> current = head;
-        for (int i = 0; i <= index; i++) {
+        for (int i = 0; i < index - 1; i++) {
             current = current.getNext();
         }
         current.setNext(new LinkedListNode<T>(data, current.getNext()));
@@ -55,7 +55,7 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
             throw new IndexOutOfBoundsException("Invalid index provided.");
         }
         LinkedListNode<T> current = head;
-        for (int i = 0; i <= index; i++) {
+        for (int i = 0; i < index - 1; i++) {
             current = current.getNext();
         }
         T value = current.getNext().getData();
@@ -98,8 +98,8 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Invalid index provided.");
         }
-        LinkedListNode<T> current = head.getNext();
-        for (int i = 0; i <= index; i++) {
+        LinkedListNode<T> current = head;
+        for (int i = 0; i < index; i++) {
             current = current.getNext();
         }
         return current.getData();
@@ -108,7 +108,7 @@ public class SinglyLinkedList<T> implements LinkedListInterface<T> {
     @Override
     public Object[] toArray() {
         Object[] array = new Object[size];
-        LinkedListNode<T> current = head.getNext();
+        LinkedListNode<T> current = head;
         for (int i = 0; i < size; i++) {
             array[i] = current;
             current = current.getNext();
