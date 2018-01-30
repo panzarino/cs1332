@@ -1,5 +1,7 @@
 import com.sun.org.apache.xml.internal.security.Init;
 
+import java.util.NoSuchElementException;
+
 /**
  * Your implementation of an array-backed stack.
  *
@@ -33,6 +35,9 @@ public class ArrayStack<T> implements StackInterface<T> {
      */
     @Override
     public T pop() {
+        if (size == 0) {
+            throw new NoSuchElementException("Stack is empty.");
+        }
         T value = backingArray[size - 1];
         backingArray[size--] = null;
         return value;
@@ -60,6 +65,9 @@ public class ArrayStack<T> implements StackInterface<T> {
 
     @Override
     public T peek() {
+        if (size == 0) {
+            return null;
+        }
         return backingArray[size - 1];
     }
 

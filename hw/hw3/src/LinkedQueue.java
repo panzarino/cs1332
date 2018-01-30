@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 /**
  * Your implementation of a linked queue. It should NOT be circular.
  *
@@ -15,17 +17,36 @@ public class LinkedQueue<T> implements QueueInterface<T> {
 
     @Override
     public T dequeue() {
-
+        if (size == 0) {
+            throw new NoSuchElementException("Queue is empty.");
+        }
+        T value = head.getData();
+        head = head.getNext();
+        size--;
+        return value;
     }
 
     @Override
     public void enqueue(T data) {
-
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null");
+        }
+        if (size == 0) {
+            head = new LinkedNode<T>(data);
+            tail = head;
+        } else {
+            tail.setNext(new LinkedNode<T>(data));
+            tail = tail.getNext();
+        }
+        size++;
     }
 
     @Override
     public T peek() {
-
+        if (size == 0) {
+            return null;
+        }
+        return head.getData();
     }
 
     @Override
