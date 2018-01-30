@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 /**
  * Your implementation of a linked stack. It should NOT be circular.
  *
@@ -14,17 +16,27 @@ public class LinkedStack<T> implements StackInterface<T> {
 
     @Override
     public T pop() {
-
+        if (size == 0) {
+            throw new NoSuchElementException("Stack is empty.");
+        }
+        T value = head.getData();
+        head = head.getNext();
+        size--;
+        return value;
     }
 
     @Override
     public void push(T data) {
-
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null.");
+        }
+        head.setNext(new LinkedNode<T>(data, head.getNext()));
+        size++;
     }
 
     @Override
     public T peek() {
-
+        return head.getData();
     }
 
     @Override

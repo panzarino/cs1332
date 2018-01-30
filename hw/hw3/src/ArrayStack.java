@@ -1,3 +1,5 @@
+import com.sun.org.apache.xml.internal.security.Init;
+
 /**
  * Your implementation of an array-backed stack.
  *
@@ -16,7 +18,7 @@ public class ArrayStack<T> implements StackInterface<T> {
      * Constructs a new ArrayStack.
      */
     public ArrayStack() {
-
+        backingArray = (T[]) (new Object[INITIAL_CAPACITY]);
     }
 
     /**
@@ -31,7 +33,9 @@ public class ArrayStack<T> implements StackInterface<T> {
      */
     @Override
     public T pop() {
-
+        T value = backingArray[size - 1];
+        backingArray[size--] = null;
+        return value;
     }
 
     /**
@@ -44,12 +48,19 @@ public class ArrayStack<T> implements StackInterface<T> {
      */
     @Override
     public void push(T data) {
-
+        if (size == backingArray.length) {
+            T[] newArray = (T[]) (new Object[INITIAL_CAPACITY]);
+            for (int i = 0; i < size; i++) {
+                newArray[i] = backingArray[i];
+            }
+            backingArray = newArray;
+        }
+        backingArray[++size - 1] = data;
     }
 
     @Override
     public T peek() {
-
+        return backingArray[size - 1];
     }
 
     @Override
