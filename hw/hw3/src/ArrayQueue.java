@@ -1,9 +1,9 @@
 /**
  * Your implementation of an array-backed queue.
  *
- * @author YOUR NAME HERE
- * @userid YOUR USER ID HERE (e.g. gburdell3)
- * @GTID YOUR GT ID HERE (e.g. 900000000)
+ * @author Zachary Panzarino
+ * @userid zpanzarino3
+ * @GTID 903305160
  * @version 1.0
  */
 public class ArrayQueue<T> implements QueueInterface<T> {
