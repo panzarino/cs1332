@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 /**
  * Your implementation of an array-backed queue.
  *
@@ -17,7 +19,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
      * Constructs a new ArrayQueue.
      */
     public ArrayQueue() {
-
+        backingArray = (T[]) (new Object[INITIAL_CAPACITY]);
     }
 
     /**
@@ -36,7 +38,18 @@ public class ArrayQueue<T> implements QueueInterface<T> {
      */
     @Override
     public T dequeue() {
-
+        if (size == 0) {
+            throw new NoSuchElementException("Queue is empty.");
+        }
+        T value = backingArray[front];
+        backingArray[front] = null;
+        if (++front == backingArray.length) {
+            front = 0;
+        }
+        if (--size == 0) {
+            front = 0;
+        }
+        return value;
     }
 
     /**
@@ -51,12 +64,32 @@ public class ArrayQueue<T> implements QueueInterface<T> {
      */
     @Override
     public void enqueue(T data) {
-
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null.");
+        }
+        if (size == backingArray.length) {
+            T[] newArray = (T[]) (new Object[INITIAL_CAPACITY]);
+            for (int i = 0; i < size; i++) {
+                int index = front + i;
+                if (index >= backingArray.length) {
+                    index -= backingArray.length;
+                }
+                newArray[i] = backingArray[index];
+            }
+            backingArray = newArray;
+            front = 0;
+        }
+        int index = front + size;
+        if (index > backingArray.length) {
+            index -= backingArray.length;
+        }
+        backingArray[index] = data;
+        size++;
     }
 
     @Override
     public T peek() {
-
+        return (size == 0) ? null : backingArray[size - 1];
     }
 
     @Override

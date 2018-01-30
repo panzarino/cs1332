@@ -1,5 +1,3 @@
-import com.sun.org.apache.xml.internal.security.Init;
-
 import java.util.NoSuchElementException;
 
 /**
@@ -65,10 +63,7 @@ public class ArrayStack<T> implements StackInterface<T> {
 
     @Override
     public T peek() {
-        if (size == 0) {
-            return null;
-        }
-        return backingArray[size - 1];
+        return (size == 0) ? null : backingArray[size - 1];
     }
 
     @Override

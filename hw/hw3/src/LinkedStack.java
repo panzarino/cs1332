@@ -40,10 +40,7 @@ public class LinkedStack<T> implements StackInterface<T> {
 
     @Override
     public T peek() {
-        if (size == 0) {
-            return null;
-        }
-        return head.getData();
+        return (size == 0) ? null : head.getData();
     }
 
     @Override
