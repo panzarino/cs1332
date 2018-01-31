@@ -68,7 +68,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
             throw new IllegalArgumentException("Data cannot be null.");
         }
         if (size == backingArray.length) {
-            T[] newArray = (T[]) (new Object[INITIAL_CAPACITY]);
+            T[] newArray = (T[]) (new Object[2 * INITIAL_CAPACITY]);
             for (int i = 0; i < size; i++) {
                 int index = front + i;
                 if (index >= backingArray.length) {
@@ -80,7 +80,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
             front = 0;
         }
         int index = front + size;
-        if (index > backingArray.length) {
+        if (index >= backingArray.length) {
             index -= backingArray.length;
         }
         backingArray[index] = data;
@@ -89,7 +89,7 @@ public class ArrayQueue<T> implements QueueInterface<T> {
 
     @Override
     public T peek() {
-        return (size == 0) ? null : backingArray[size - 1];
+        return (size == 0) ? null : backingArray[front];
     }
 
     @Override

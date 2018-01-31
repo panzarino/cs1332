@@ -37,7 +37,7 @@ public class ArrayStack<T> implements StackInterface<T> {
             throw new NoSuchElementException("Stack is empty.");
         }
         T value = backingArray[size - 1];
-        backingArray[size--] = null;
+        backingArray[--size] = null;
         return value;
     }
 
@@ -51,8 +51,11 @@ public class ArrayStack<T> implements StackInterface<T> {
      */
     @Override
     public void push(T data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null.");
+        }
         if (size == backingArray.length) {
-            T[] newArray = (T[]) (new Object[INITIAL_CAPACITY]);
+            T[] newArray = (T[]) (new Object[2 * INITIAL_CAPACITY]);
             for (int i = 0; i < size; i++) {
                 newArray[i] = backingArray[i];
             }

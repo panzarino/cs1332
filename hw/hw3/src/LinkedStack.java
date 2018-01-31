@@ -30,11 +30,7 @@ public class LinkedStack<T> implements StackInterface<T> {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null.");
         }
-        if (size == 0) {
-            head = new LinkedNode<T>(data);
-        } else {
-            head.setNext(new LinkedNode<T>(data, head.getNext()));
-        }
+        head = new LinkedNode<T>(data, (size == 0) ? null : head);
         size++;
     }
 
