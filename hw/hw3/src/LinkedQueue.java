@@ -22,6 +22,9 @@ public class LinkedQueue<T> implements QueueInterface<T> {
         }
         T value = head.getData();
         head = head.getNext();
+        if (head == null) {
+            tail = null;
+        }
         size--;
         return value;
     }

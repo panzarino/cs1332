@@ -55,7 +55,7 @@ public class ArrayStack<T> implements StackInterface<T> {
             throw new IllegalArgumentException("Data cannot be null.");
         }
         if (size == backingArray.length) {
-            T[] newArray = (T[]) (new Object[2 * INITIAL_CAPACITY]);
+            T[] newArray = (T[]) (new Object[2 * backingArray.length]);
             for (int i = 0; i < size; i++) {
                 newArray[i] = backingArray[i];
             }
