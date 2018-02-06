@@ -4,9 +4,9 @@ import java.util.List;
 /**
  * Your implementation of a binary search tree.
  *
- * @author YOUR NAME HERE
- * @userid YOUR USER ID HERE (i.e. gburdell3)
- * @GTID YOUR GT ID HERE (i.e. 900000000)
+ * @author Zachary Panzarino
+ * @userid zpanzarino3
+ * @GTID 903305160
  * @version 1.0
  */
 public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
