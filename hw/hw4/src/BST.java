@@ -1,5 +1,6 @@
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Your implementation of a binary search tree.
@@ -53,25 +54,25 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
     /**
      * Recursively adds data in the correct location
      * @param data the data to add to the tree
-     * @param current the current node in recursive calls
+     * @param node the current node in recursive calls
      */
-    private void addHelper(T data, BSTNode<T> current) {
-        int compared = data.compareTo(current.getData());
+    private void addHelper(T data, BSTNode<T> node) {
+        int compared = data.compareTo(node.getData());
         if (compared == 0) {
             return;
         }
         if (compared > 0) {
-            if (current.getRight() != null) {
-                addHelper(data, current.getRight());
+            if (node.getRight() != null) {
+                addHelper(data, node.getRight());
             } else {
-                current.setRight(new BSTNode<T>(data));
+                node.setRight(new BSTNode<T>(data));
                 size++;
             }
         } else {
-            if (current.getLeft() != null) {
-                addHelper(data, current.getLeft());
+            if (node.getLeft() != null) {
+                addHelper(data, node.getLeft());
             } else {
-                current.setLeft(new BSTNode<T>(data));
+                node.setLeft(new BSTNode<T>(data));
                 size++;
             }
         }
@@ -84,12 +85,60 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public T get(T data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Cannot search for null data.");
+        }
+        return getHelper(data, root);
+    }
 
+    /**
+     * Recursively searches for value in the tree
+     * @param data the data to search for in the tree
+     * @param node the current node in recursive calls
+     * @return the data in the tree equal to the data parameter
+     */
+    private T getHelper(T data, BSTNode<T> node) {
+        if (node == null) {
+            throw new NoSuchElementException("Element could not be found in tree.");
+        }
+        if (node.getData().equals(data)) {
+            return node.getData();
+        }
+        int compared = data.compareTo(node.getData());
+        if (compared > 0) {
+            return getHelper(data, node.getRight());
+        } else {
+            return getHelper(data, node.getLeft());
+        }
     }
 
     @Override
     public boolean contains(T data) {
+        if (data == null) {
+            throw new IllegalArgumentException("Cannot search for null data.");
+        }
+        return containsHelper(data, root);
+    }
 
+    /**
+     * Recursively searches to see if the tree contains a value
+     * @param data the data to search for in the tree
+     * @param node the current node in recursive calls
+     * @return whether or not the data is contained within the tree
+     */
+    private boolean containsHelper(T data, BSTNode<T> node) {
+        if (node == null) {
+            return false;
+        }
+        if (node.getData().equals(data)) {
+            return true;
+        }
+        int compared = data.compareTo(node.getData());
+        if (compared > 0) {
+            return containsHelper(data, node.getRight());
+        } else {
+            return containsHelper(data, node.getLeft());
+        }
     }
 
     @Override
