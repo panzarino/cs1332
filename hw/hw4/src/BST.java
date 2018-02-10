@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,8 +20,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
      * A no-argument constructor that should initialize an empty BST.
      * DO NOT IMPLEMENT THIS CONSTRUCTOR!
      */
-    public BST() {
-    }
+    public BST() { }
 
     /**
      * Initializes the BST with the data in the Collection. The data
@@ -143,7 +143,23 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public List<T> preorder() {
+        return preorderHelper(new ArrayList<T>(size), root);
+    }
 
+    /**
+     * Recursively populates a list in a preorder traversal
+     * @param list the list to add elements to
+     * @param node the current node in recursive calls
+     * @return the list with data from node added
+     */
+    private List<T> preorderHelper(List<T> list, BSTNode<T> node) {
+        if (node == null) {
+            return list;
+        }
+        list.add(node.getData());
+        preorderHelper(list, node.getLeft());
+        preorderHelper(list, node.getRight());
+        return list;
     }
 
     @Override
@@ -168,7 +184,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public void clear() {
-
+        root = null;
     }
 
     @Override
