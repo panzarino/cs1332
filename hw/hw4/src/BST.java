@@ -143,33 +143,65 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public List<T> preorder() {
-        return preorderHelper(new ArrayList<T>(size), root);
+        List<T> list = new ArrayList<T>(size);
+        preorderHelper(list, root);
+        return list;
     }
 
     /**
      * Recursively populates a list in a preorder traversal
      * @param list the list to add elements to
      * @param node the current node in recursive calls
-     * @return the list with data from node added
      */
-    private List<T> preorderHelper(List<T> list, BSTNode<T> node) {
+    private void preorderHelper(List<T> list, BSTNode<T> node) {
         if (node == null) {
-            return list;
+            return;
         }
         list.add(node.getData());
         preorderHelper(list, node.getLeft());
         preorderHelper(list, node.getRight());
-        return list;
     }
 
     @Override
     public List<T> postorder() {
+        List<T> list = new ArrayList<T>(size);
+        postorderHelper(list, root);
+        return list;
+    }
 
+    /**
+     * Recursively populates a list in a postorder traversal
+     * @param list the list to add elements to
+     * @param node the current node in recursive calls
+     */
+    private void postorderHelper(List<T> list, BSTNode<T> node) {
+        if (node == null) {
+            return;
+        }
+        postorderHelper(list, node.getLeft());
+        postorderHelper(list, node.getRight());
+        list.add(node.getData());
     }
 
     @Override
     public List<T> inorder() {
+        List<T> list = new ArrayList<T>(size);
+        inorderHelper(list, root);
+        return list;
+    }
 
+    /**
+     * Recursively populates a list in an inorder traversal
+     * @param list the list to add elements to
+     * @param node the current node in recursive calls
+     */
+    private void inorderHelper(List<T> list, BSTNode<T> node) {
+        if (node == null) {
+            return;
+        }
+        inorderHelper(list, node.getLeft());
+        list.add(node.getData());
+        inorderHelper(list, node.getRight());
     }
 
     @Override
