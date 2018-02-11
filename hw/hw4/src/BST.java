@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 
 /**
  * Your implementation of a binary search tree.
@@ -43,7 +45,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
         if (data == null) {
             throw new IllegalArgumentException("A null value cannot be added to the tree.");
         }
-        if (root == null) {
+        if (size == 0) {
             root = new BSTNode<T>(data);
             size++;
         } else {
@@ -206,7 +208,20 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public List<T> levelorder() {
-
+        Queue<BSTNode<T>> queue = new LinkedList<BSTNode<T>>();
+        List<T> list = new ArrayList<T>(size);
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            BSTNode<T> node = queue.poll();
+            list.add(node.getData());
+            if (node.getLeft() != null) {
+                queue.add(node.getLeft());
+            }
+            if (node.getRight() != null) {
+                queue.add(node.getRight());
+            }
+        }
+        return list;
     }
 
     @Override
@@ -216,12 +231,27 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public void clear() {
-        root = null;
+        size = 0;
     }
 
     @Override
     public int height() {
+        return heightHelper(root);
+    }
 
+    /**
+     * Recursively calculate the height of a node
+     * @param node the current node in recursive calls
+     * @return the height of the node
+     */
+    private int heightHelper(BSTNode<T> node) {
+        if (node == null) {
+            return -1;
+        }
+        if (node.getRight() == null && node.getLeft() == null) {
+            return 0;
+        }
+        return Math.max(heightHelper(node.getLeft()), heightHelper(node.getRight()));
     }
 
     @Override
