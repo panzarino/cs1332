@@ -49,7 +49,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
                 "A null value cannot be added to the tree."
             );
         }
-        if (size == 0) {
+        if (root == null) {
             root = new BSTNode<T>(data);
             size++;
         } else {
@@ -126,23 +126,26 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
                     } else {
                         root = right;
                     }
-                }
-                if (data.compareTo(parent.getLeft().getData()) == 0) {
-                    if (left == null && right == null) {
-                        parent.setLeft(null);
-                    } else if (left != null) {
-                        parent.setLeft(left);
-                    } else {
-                        parent.setLeft(right);
+                } else {
+                    if (parent.getLeft() != null
+                        && data.compareTo(parent.getLeft().getData()) == 0) {
+                        if (left == null && right == null) {
+                            parent.setLeft(null);
+                        } else if (left != null) {
+                            parent.setLeft(left);
+                        } else {
+                            parent.setLeft(right);
+                        }
                     }
-                }
-                if (data.compareTo(parent.getRight().getData()) == 0) {
-                    if (left == null && right == null) {
-                        parent.setRight(null);
-                    } else if (left != null) {
-                        parent.setRight(left);
-                    } else {
-                        parent.setRight(right);
+                    if (parent.getRight() != null
+                        && data.compareTo(parent.getRight().getData()) == 0) {
+                        if (left == null && right == null) {
+                            parent.setRight(null);
+                        } else if (left != null) {
+                            parent.setRight(left);
+                        } else {
+                            parent.setRight(right);
+                        }
                     }
                 }
             }
@@ -164,7 +167,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
     private T predecessor(BSTNode<T> node) {
         BSTNode<T> right = node.getRight();
         if (right.getRight() == null) {
-            node.setRight(null);
+            node.setRight(right.getLeft());
             return right.getData();
         }
         return predecessor(right);
@@ -219,11 +222,10 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
         if (node == null) {
             return false;
         }
-        if (node.getData().equals(data)) {
-            return true;
-        }
         int compared = data.compareTo(node.getData());
-        if (compared > 0) {
+        if (compared == 0) {
+            return true;
+        } else if (compared > 0) {
             return containsHelper(data, node.getRight());
         } else {
             return containsHelper(data, node.getLeft());
@@ -297,6 +299,9 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
     public List<T> levelorder() {
         Queue<BSTNode<T>> queue = new LinkedList<BSTNode<T>>();
         List<T> list = new ArrayList<T>(size);
+        if (root == null) {
+            return list;
+        }
         queue.add(root);
         while (!queue.isEmpty()) {
             BSTNode<T> node = queue.poll();
@@ -333,6 +338,9 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
      * @return the common ancestor
      */
     private BSTNode<T> commonAncestor(T greater, T smaller, BSTNode<T> node) {
+        if (node == null) {
+            throw new NoSuchElementException("Could not find values in tree");
+        }
         int comparedGreater = greater.compareTo(node.getData());
         int comparedSmaller = smaller.compareTo(node.getData());
         if (comparedGreater > 0 && comparedSmaller > 0) {
@@ -369,6 +377,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
 
     @Override
     public void clear() {
+        root = null;
         size = 0;
     }
 
@@ -391,7 +400,7 @@ public class BST<T extends Comparable<? super T>> implements BSTInterface<T> {
         }
         return Math.max(
             heightHelper(node.getLeft()), heightHelper(node.getRight())
-        );
+        ) + 1;
     }
 
     @Override
