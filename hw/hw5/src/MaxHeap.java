@@ -2,9 +2,9 @@ import java.util.ArrayList;
 /**
  * Your implementation of a max heap.
  *
- * @author YOUR NAME HERE
- * @userid YOUR USER ID HERE (i.e. gburdell3)
- * @GTID YOUR GT ID HERE (i.e. 900000000)
+ * @author Zachary Panzarino
+ * @userid zpanzarino3
+ * @GTID 903305160
  * @version 1.0
  */
 public class MaxHeap<T extends Comparable<? super T>>
@@ -22,7 +22,7 @@ public class MaxHeap<T extends Comparable<? super T>>
      * Use the constant field in the interface. Do not use magic numbers!
      */
     public MaxHeap() {
-
+        clear();
     }
 
     /**
@@ -71,7 +71,8 @@ public class MaxHeap<T extends Comparable<? super T>>
 
     @Override
     public void clear() {
-
+        backingArray = (T[]) (new Object[INITIAL_CAPACITY]);
+        size = 0;
     }
 
     @Override
