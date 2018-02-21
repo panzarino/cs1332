@@ -49,12 +49,40 @@ public class MaxHeap<T extends Comparable<? super T>>
 
     @Override
     public void add(T item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Data cannot be null.");
+        }
+        if (size == backingArray.length) {
+            T[] newBacking = (T[]) (new Object[2 * size]);
+            for (int i = 0; i < size; i++) {
+                newBacking[i] = backingArray[i];
+            }
+            backingArray = newBacking;
+        }
+        backingArray[++size] = item;
+        addHelper(size);
+    }
 
+    /**
+     * Recursively heapify current backingArray
+     * @param index the index of the array in recursive calls
+     */
+    private void addHelper(int index) {
+        int half = index / 2;
+        if (half < 1) {
+            return;
+        }
+        if (backingArray[half].compareTo(backingArray[index]) < 0) {
+            T temp = backingArray[index];
+            backingArray[index] = backingArray[half];
+            backingArray[half] = temp;
+            addHelper(half);
+        }
     }
 
     @Override
     public T remove() {
-
+        
     }
 
     @Override
