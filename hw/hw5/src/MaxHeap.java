@@ -46,13 +46,28 @@ public class MaxHeap<T extends Comparable<? super T>>
      * @throws IllegalArgumentException if data or any element in data is null
      */
     public MaxHeap(ArrayList<T> data) {
-
+        if (data == null) {
+            throw new IllegalArgumentException("Data cannot be null.");
+        }
+        backingArray = (T[]) (new Object[data.size() * 2 + 1]);
+        for (int i = 0; i < data.size(); i++) {
+            T value = data.get(i);
+            if (value == null) {
+                throw new IllegalArgumentException(
+                    "Data in collection cannot be null."
+                );
+            }
+            backingArray[i + 1] = value;
+        }
+        for (int i = data.size() / 2; i > 1; i--) {
+            removeHelper(i);
+        }
     }
 
     @Override
     public void add(T item) {
         if (item == null) {
-            throw new IllegalArgumentException("Data cannot be null.");
+            throw new IllegalArgumentException("Item cannot be null.");
         }
         if (size == backingArray.length) {
             T[] newBacking = (T[]) (new Object[2 * size]);
@@ -102,16 +117,16 @@ public class MaxHeap<T extends Comparable<? super T>>
      */
     private void removeHelper(int index) {
         int child = 2 * index;
-        if (child > 0 || backingArray[child] == null) {
-            return;
-        }
-        if (backingArray[index].compareTo(backingArray[child]) < 0) {
-            T temp = backingArray[child];
-            backingArray[child] = backingArray[index];
-            backingArray[index] = temp;
-            removeHelper(child);
-        }
-        child++;
+        removeSwap(index, child);
+        removeSwap(index, child + 1);
+    }
+
+    /**
+     * Swap elements in remove method if applicable
+     * @param index the current index
+     * @param child the current child index
+     */
+    private void removeSwap(int index, int child) {
         if (child > 0 || backingArray[child] == null) {
             return;
         }
