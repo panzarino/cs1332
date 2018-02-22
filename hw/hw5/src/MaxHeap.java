@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+
 /**
  * Your implementation of a max heap.
  *
@@ -82,7 +84,43 @@ public class MaxHeap<T extends Comparable<? super T>>
 
     @Override
     public T remove() {
-        
+        if (isEmpty()) {
+            throw new NoSuchElementException(
+                "Cannot remove element if heap is empty."
+            );
+        }
+        T value = backingArray[1];
+        backingArray[1] = backingArray[size];
+        backingArray[size] = null;
+        removeHelper(1);
+        return value;
+    }
+
+    /**
+     * Recursively sorts the list on remove
+     * @param index the index of the array in recursive calls
+     */
+    private void removeHelper(int index) {
+        int child = 2 * index;
+        if (child > 0 || backingArray[child] == null) {
+            return;
+        }
+        if (backingArray[index].compareTo(backingArray[child]) < 0) {
+            T temp = backingArray[child];
+            backingArray[child] = backingArray[index];
+            backingArray[index] = temp;
+            removeHelper(child);
+        }
+        child++;
+        if (child > 0 || backingArray[child] == null) {
+            return;
+        }
+        if (backingArray[index].compareTo(backingArray[child]) < 0) {
+            T temp = backingArray[child];
+            backingArray[child] = backingArray[index];
+            backingArray[index] = temp;
+            removeHelper(child);
+        }
     }
 
     @Override
