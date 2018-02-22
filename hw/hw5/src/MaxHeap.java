@@ -72,7 +72,7 @@ public class MaxHeap<T extends Comparable<? super T>>
         }
         if (size + 1 == backingArray.length) {
             T[] newBacking = (T[]) (new Comparable[2 * backingArray.length]);
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < backingArray.length; i++) {
                 newBacking[i] = backingArray[i];
             }
             backingArray = newBacking;
