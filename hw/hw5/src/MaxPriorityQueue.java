@@ -1,9 +1,11 @@
+import java.util.NoSuchElementException;
+
 /**
  * Your implementation of a max priority queue.
  * 
- * @author YOUR NAME HERE
- * @userid YOUR USER ID HERE (i.e. gburdell3)
- * @GTID YOUR GT ID HERE (i.e. 900000000)
+ * @author Zachary Panzarino
+ * @userid zpanzarino3
+ * @GTID 903305160
  * @version 1.0
  */
 public class MaxPriorityQueue<T extends Comparable<? super T>>
@@ -17,17 +19,17 @@ public class MaxPriorityQueue<T extends Comparable<? super T>>
      * Creates a priority queue.
      */
     public MaxPriorityQueue() {
-
+        clear();
     }
 
     @Override
     public void enqueue(T item) {
-
+        backingHeap.add(item);
     }
 
     @Override
     public T dequeue() {
-
+        return backingHeap.remove();
     }
 
     @Override
@@ -44,7 +46,7 @@ public class MaxPriorityQueue<T extends Comparable<? super T>>
 
     @Override
     public void clear() {
-
+        backingHeap = new MaxHeap<T>();
     }
 
     @Override
