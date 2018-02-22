@@ -49,7 +49,7 @@ public class MaxHeap<T extends Comparable<? super T>>
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null.");
         }
-        backingArray = (T[]) (new Object[data.size() * 2 + 1]);
+        backingArray = (T[]) (new Comparable[data.size() * 2 + 1]);
         for (int i = 0; i < data.size(); i++) {
             T value = data.get(i);
             if (value == null) {
@@ -70,7 +70,7 @@ public class MaxHeap<T extends Comparable<? super T>>
             throw new IllegalArgumentException("Item cannot be null.");
         }
         if (size == backingArray.length) {
-            T[] newBacking = (T[]) (new Object[2 * size]);
+            T[] newBacking = (T[]) (new Comparable[2 * size]);
             for (int i = 0; i < size; i++) {
                 newBacking[i] = backingArray[i];
             }
@@ -90,9 +90,7 @@ public class MaxHeap<T extends Comparable<? super T>>
             return;
         }
         if (backingArray[half].compareTo(backingArray[index]) < 0) {
-            T temp = backingArray[index];
-            backingArray[index] = backingArray[half];
-            backingArray[half] = temp;
+            swap(index, half);
             addHelper(half);
         }
     }
@@ -106,7 +104,7 @@ public class MaxHeap<T extends Comparable<? super T>>
         }
         T value = backingArray[1];
         backingArray[1] = backingArray[size];
-        backingArray[size] = null;
+        backingArray[size--] = null;
         removeHelper(1);
         return value;
     }
@@ -127,15 +125,24 @@ public class MaxHeap<T extends Comparable<? super T>>
      * @param child the current child index
      */
     private void removeSwap(int index, int child) {
-        if (child > 0 || backingArray[child] == null) {
+        if (child > size || backingArray[child] == null) {
             return;
         }
         if (backingArray[index].compareTo(backingArray[child]) < 0) {
-            T temp = backingArray[child];
-            backingArray[child] = backingArray[index];
-            backingArray[index] = temp;
+            swap(index, child);
             removeHelper(child);
         }
+    }
+
+    /**
+     * Swap two elements in the backingArray
+     * @param a the first index to swap
+     * @param b the second index to swap
+     */
+    private void swap(int a, int b) {
+        T temp = backingArray[a];
+        backingArray[a] = backingArray[b];
+        backingArray[b] = temp;
     }
 
     @Override
@@ -152,7 +159,7 @@ public class MaxHeap<T extends Comparable<? super T>>
 
     @Override
     public void clear() {
-        backingArray = (T[]) (new Object[INITIAL_CAPACITY]);
+        backingArray = (T[]) (new Comparable[INITIAL_CAPACITY]);
         size = 0;
     }
 
