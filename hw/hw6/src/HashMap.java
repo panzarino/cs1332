@@ -4,9 +4,9 @@ import java.util.Set;
 /**
  * Your implementation of HashMap.
  * 
- * @author YOUR NAME HERE
- * @userid YOUR USER ID HERE (i.e. gburdell3)
- * @GTID YOUR GT ID HERE (i.e. 900000000)
+ * @author Zachary Panzarino
+ * @userid zpanzarino3
+ * @GTID 903305160
  * @version 1.0
  */
 public class HashMap<K, V> implements HashMapInterface<K, V> {
@@ -24,7 +24,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
      * Use constructor chaining.
      */
     public HashMap() {
-
+        this(INITIAL_CAPACITY);
     }
 
     /**
@@ -36,7 +36,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
      * @param initialCapacity initial capacity of the backing array
      */
     public HashMap(int initialCapacity) {
-
+        table = (MapEntry<K, V>[]) (new Object[initialCapacity]);
     }
 
     @Override
