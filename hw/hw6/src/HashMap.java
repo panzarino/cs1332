@@ -35,7 +35,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
      * @param initialCapacity initial capacity of the backing array
      */
     public HashMap(int initialCapacity) {
-        table = (MapEntry<K, V>[]) (new Object[initialCapacity]);
+        table = new MapEntry[initialCapacity];
     }
 
     @Override
@@ -127,7 +127,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
 
     @Override
     public void clear() {
-        table = (MapEntry<K, V>[]) (new Object[INITIAL_CAPACITY]);
+        table = new MapEntry[INITIAL_CAPACITY];
         size = 0;
     }
 
@@ -166,7 +166,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
                 "New length must be greater than current table length."
             );
         }
-        MapEntry<K, V>[] newTable = (MapEntry<K, V>[]) (new Object[length]);
+        MapEntry<K, V>[] newTable = new MapEntry[length];
         for (MapEntry<K, V> entry : table) {
             for (MapEntry<K, V> i = entry; i != null; i = i.getNext()) {
                 K key = i.getKey();
