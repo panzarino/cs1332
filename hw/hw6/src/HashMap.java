@@ -176,11 +176,12 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
                 if (position == null) {
                     newTable[index] = new MapEntry<K, V>(key, value);
                     size++;
+                } else {
+                    while (position.getNext() != null) {
+                        position = position.getNext();
+                    }
+                    position.setNext(new MapEntry<K, V>(key, value));
                 }
-                while (position.getNext() != null) {
-                    position = position.getNext();
-                }
-                position.setNext(new MapEntry<K, V>(key, value));
             }
         }
         table = newTable;
