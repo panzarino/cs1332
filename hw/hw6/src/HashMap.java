@@ -1,6 +1,4 @@
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Your implementation of HashMap.
@@ -51,7 +49,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         if (size + 1 / ((double) table.length) > MAX_LOAD_FACTOR) {
             resizeBackingTable(table.length * 2 + 1);
         }
-        int index = key.hashCode() % table.length;
+        int index = Math.abs(key.hashCode()) % table.length;
         MapEntry<K, V> position = table[index];
         if (position == null) {
             table[index] = new MapEntry<K, V>(key, value);
@@ -66,12 +64,9 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
                 size++;
                 return temp;
             }
-            if (i.getNext() == null) {
-                table[index] = new MapEntry<K, V>(key, value, position);
-                size++;
-                return null;
-            }
         }
+        table[index] = new MapEntry<K, V>(key, value, position);
+        size++;
         return null;
     }
 
@@ -80,7 +75,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null.");
         }
-        int index = key.hashCode() % table.length;
+        int index = Math.abs(key.hashCode()) % table.length;
         MapEntry<K, V> position = table[index];
         if (position.getKey().equals(key)) {
             V value = position.getValue();
@@ -107,7 +102,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null.");
         }
-        MapEntry<K, V> position = table[key.hashCode() % table.length];
+        MapEntry<K, V> position = table[Math.abs(key.hashCode()) % table.length];
         for (MapEntry<K, V> i = position; i != null; i = i.getNext()) {
             if (i.getKey().equals(key)) {
                 return i.getValue();
@@ -118,7 +113,16 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
 
     @Override
     public boolean containsKey(K key) {
-
+        if (key == null) {
+            throw new IllegalArgumentException("Key cannot be null.");
+        }
+        MapEntry<K, V> position = table[Math.abs(key.hashCode()) % table.length];
+        for (MapEntry<K, V> i = position; i != null; i = i.getNext()) {
+            if (i.getKey().equals(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -135,12 +139,24 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
 
     @Override
     public Set<K> keySet() {
-
+        Set<K> set = new HashSet<K>();
+        for (MapEntry<K, V> entry : table) {
+            for (MapEntry<K, V> i = entry; i != null; i = i.getNext()) {
+                set.add(i.getKey());
+            }
+        }
+        return set;
     }
 
     @Override
     public List<V> values() {
-
+        List<V> list = new ArrayList<V>(size);
+        for (MapEntry<K, V> entry : table) {
+            for (MapEntry<K, V> i = entry; i != null; i = i.getNext()) {
+                list.add(i.getValue());
+            }
+        }
+        return list;
     }
 
     @Override
@@ -155,7 +171,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
             for (MapEntry<K, V> i = entry; i != null; i = i.getNext()) {
                 K key = i.getKey();
                 V value = i.getValue();
-                int index = key.hashCode() % newTable.length;
+                int index = Math.abs(key.hashCode()) % newTable.length;
                 MapEntry<K, V> position = newTable[index];
                 if (position == null) {
                     newTable[index] = new MapEntry<K, V>(key, value);
