@@ -1,4 +1,8 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Your implementation of HashMap.
@@ -161,7 +165,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
 
     @Override
     public void resizeBackingTable(int length) {
-        if (length < table.length) {
+        if (length < size) {
             throw new IllegalArgumentException(
                 "New length must be greater than current table length."
             );
@@ -173,15 +177,7 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
                 V value = i.getValue();
                 int index = Math.abs(key.hashCode()) % newTable.length;
                 MapEntry<K, V> position = newTable[index];
-                if (position == null) {
-                    newTable[index] = new MapEntry<K, V>(key, value);
-                    size++;
-                } else {
-                    while (position.getNext() != null) {
-                        position = position.getNext();
-                    }
-                    position.setNext(new MapEntry<K, V>(key, value));
-                }
+                newTable[index] = new MapEntry<K, V>(key, value, position);
             }
         }
         table = newTable;
