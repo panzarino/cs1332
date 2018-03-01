@@ -55,17 +55,11 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         }
         int index = Math.abs(key.hashCode()) % table.length;
         MapEntry<K, V> position = table[index];
-        if (position == null) {
-            table[index] = new MapEntry<K, V>(key, value);
-            size++;
-            return null;
-        }
         for (MapEntry<K, V> i = position; i != null; i = i.getNext()) {
             if (i.getKey().equals(key)) {
                 V temp = i.getValue();
                 i.setKey(key);
                 i.setValue(value);
-                size++;
                 return temp;
             }
         }
@@ -81,21 +75,25 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         }
         int index = Math.abs(key.hashCode()) % table.length;
         MapEntry<K, V> position = table[index];
-        if (position.getKey().equals(key)) {
-            V value = position.getValue();
-            table[index] = position.getNext();
-            size--;
-            return value;
-        }
-        for (
-            MapEntry<K, V> i = position; i.getNext() != null; i = i.getNext()
-        ) {
-            MapEntry<K, V> next = i.getNext();
-            if (next.getKey().equals(key)) {
-                V value = next.getValue();
-                i.setNext(next.getNext());
+        if (position != null) {
+            if (position.getKey() != null && position.getKey().equals(key)) {
+                V value = position.getValue();
+                table[index] = position.getNext();
                 size--;
                 return value;
+            }
+            for (
+                MapEntry<K, V> i = position;
+                i.getNext() != null;
+                i = i.getNext()
+            ) {
+                MapEntry<K, V> next = i.getNext();
+                if (next.getKey().equals(key)) {
+                    V value = next.getValue();
+                    i.setNext(next.getNext());
+                    size--;
+                    return value;
+                }
             }
         }
         throw new NoSuchElementException("No value exists for that key.");
@@ -106,7 +104,8 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null.");
         }
-        MapEntry<K, V> position = table[Math.abs(key.hashCode()) % table.length];
+        int index = Math.abs(key.hashCode()) % table.length;
+        MapEntry<K, V> position = table[index];
         for (MapEntry<K, V> i = position; i != null; i = i.getNext()) {
             if (i.getKey().equals(key)) {
                 return i.getValue();
@@ -120,7 +119,8 @@ public class HashMap<K, V> implements HashMapInterface<K, V> {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null.");
         }
-        MapEntry<K, V> position = table[Math.abs(key.hashCode()) % table.length];
+        int index = Math.abs(key.hashCode()) % table.length;
+        MapEntry<K, V> position = table[index];
         for (MapEntry<K, V> i = position; i != null; i = i.getNext()) {
             if (i.getKey().equals(key)) {
                 return true;
