@@ -42,102 +42,29 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null.");
         }
-        AVLNode<T> newNode = new AVLNode<T>(data);
-        if (root == null) {
-            root = newNode;
-            size++;
-            setHeightBalance(root);
-        } else {
-            addHelper(root, newNode);
-        }
+        root = addHelper(data, root);
     }
 
     /**
      * Recursively adds data in the correct location and balances tree
-     * @param previous the previous node in recursive calls
+     * @param data the data to be added
      * @param node the current node in recursive calls
+     * @return the new tree
      */
-    private void addHelper(AVLNode<T> previous, AVLNode<T> node) {
-        int compared = previous.getData().compareTo(node.getData());
-        if (compared == 0) {
-            return;
+    private AVLNode<T> addHelper(T data, AVLNode<T> node) {
+        if (node == null) {
+            size++;
+            return new AVLNode<T>(data);
         }
-        if (compared < 0) {
-            if (previous.getRight() != null) {
-                addHelper(previous.getRight(), node);
-            } else {
-                previous.setRight(node);
-                size++;
-            }
-        } else {
-            if (node.getLeft() != null) {
-                addHelper(previous.getLeft(), node);
-            } else {
-                previous.setLeft(node);
-                size++;
+        else {
+            int compared = data.compareTo(node.getData());
+            if (compared < 0) {
+                node.setLeft(addHelper(data, node.getLeft()));
+            } else if (compared > 0) {
+                node.setRight(addHelper(data, node.getRight()));
             }
         }
-        setHeightBalance(previous);
-        balance(previous);
-    }
-
-    /**
-     * Balances a node in the tree
-     * @param node node to be balanced
-     */
-    private void balance(AVLNode<T> node) {
-        int balance = node.getBalanceFactor();
-        if (balance > 1) {
-            if (node.getLeft() != null) {
-                if (node.getLeft().getBalanceFactor() >= 0) {
-                    rightRotate(node);
-                } else {
-                    leftRotate(node.getLeft());
-                    rightRotate(node);
-                }
-            }
-        } else if (balance < -1) {
-            if (node.getRight() != null) {
-                if (node.getRight().getBalanceFactor() <= 0) {
-                    leftRotate(node);
-                } else {
-                    rightRotate(node.getRight());
-                    leftRotate(node);
-                }
-            }
-        }
-    }
-
-    /**
-     * Performs a right rotation
-     * @param node node to start rotation from
-     */
-    private void rightRotate(AVLNode<T> node) {
-        AVLNode<T> newNode = new AVLNode<T>(node.getData());
-        AVLNode<T> left = node.getLeft();
-        newNode.setRight(node.getRight());
-        newNode.setLeft(left.getRight());
-        node.setData(left.getData());
-        node.setRight(newNode);
-        node.setLeft(left.getLeft());
-        left.setLeft(null);
-        setHeightBalanceSub(node);
-    }
-
-    /**
-     * Performs a left rotation
-     * @param node node to start rotation from
-     */
-    private void leftRotate(AVLNode<T> node) {
-        AVLNode<T> newNode = new AVLNode<T>(node.getData());
-        AVLNode<T> right = node.getRight();
-        newNode.setLeft(node.getLeft());
-        newNode.setRight(right.getLeft());
-        node.setData(right.getData());
-        node.setLeft(newNode);
-        node.setRight(right.getRight());
-        right.setRight(null);
-        setHeightBalanceSub(node);
+        return balance(node);
     }
 
     @Override
@@ -145,96 +72,116 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null.");
         }
-        return removeHelper(data, root, null);
+        AVLNode<T> empty = new AVLNode<>(null);
+        root = removeHelper(data, root, empty);
+        return empty.getData();
     }
 
     /**
-     * Recursively removes data from the tree
-     * @param data the data to remove from the tree
-     * @param node the current node in recursive calls
-     * @param parent the previous node in recursive calls
-     * @return the data removed from the tree
+     * Recursively remove data from tree
+     * @param data data to remove from tree
+     * @param node current node in recursive call
+     * @param empty empty node that holds data before deletion
+     * @return removed node
      */
-    private T removeHelper(T data, AVLNode<T> node, AVLNode<T> parent) {
+    private AVLNode<T> removeHelper(T data, AVLNode<T> node, AVLNode<T> empty) {
         if (node == null) {
             throw new NoSuchElementException(
                 "Element could not be found in tree."
             );
         }
         int compared = data.compareTo(node.getData());
-        if (compared == 0) {
-            AVLNode<T> left = node.getLeft();
-            AVLNode<T> right = node.getRight();
-            T value = node.getData();
-            if (left != null && right != null) {
-                if (left.getRight() == null) {
-                    node.setData(left.getData());
-                    node.setLeft(null);
-                } else {
-                    node.setData(predecessor(left));
-                }
-            } else {
-                if (parent == null) {
-                    if (left == null && right == null) {
-                        root = null;
-                    } else if (left != null) {
-                        root = left;
-                    } else {
-                        root = right;
-                    }
-                } else {
-                    if (parent.getLeft() != null
-                            && data.compareTo(parent.getLeft().getData()) == 0) {
-                        if (left == null && right == null) {
-                            parent.setLeft(null);
-                        } else if (left != null) {
-                            parent.setLeft(left);
-                        } else {
-                            parent.setLeft(right);
-                        }
-                    }
-                    if (parent.getRight() != null
-                            && data.compareTo(parent.getRight().getData()) == 0) {
-                        if (left == null && right == null) {
-                            parent.setRight(null);
-                        } else if (left != null) {
-                            parent.setRight(left);
-                        } else {
-                            parent.setRight(right);
-                        }
-                    }
-                }
-            }
+        if (compared < 0) {
+            node.setLeft(removeHelper(data, node.getLeft(), empty));
+        } else if (compared > 0) {
+            node.setRight(removeHelper(data, node.getRight(), empty));
+        } else if (compared == 0) {
             size--;
-            setHeightBalance(parent);
-            balance(parent);
-            return value;
+            empty.setData(node.getData());
+            if (node.getRight() == null && node.getLeft() == null) {
+                setHeightBalance(node);
+                return null;
+            } else if (node.getRight() == null) {
+                setHeightBalance(node);
+                return node.getLeft();
+            } else if (node.getLeft() == null) {
+                setHeightBalance(node);
+                return node.getRight();
+            } else {
+                AVLNode<T> blank = new AVLNode<>(null);
+                node.setRight(removeSuccessor(node.getRight(), blank));
+                node.setData(blank.getData());
+            }
         }
-        if (compared > 0) {
-            T value = removeHelper(data, node.getRight(), node);
-            setHeightBalance(parent);
-            balance(parent);
-            return value;
-        } else {
-            T value = removeHelper(data, node.getLeft(), node);
-            setHeightBalance(parent);
-            balance(parent);
-            return value;
-        }
+        return balance(node);
     }
 
     /**
-     * Recursively finds and removes the predecessor for the remove method
-     * @param node the node to search at
-     * @return the predecessor data
+     * Recursively finds and removes successor from tree
+     * @param node current node in recursive calls
+     * @param blank node to store successor value
+     * @return tree without successor
      */
-    private T predecessor(AVLNode<T> node) {
-        AVLNode<T> right = node.getRight();
-        if (right.getRight() == null) {
-            node.setRight(right.getLeft());
-            return right.getData();
+    private AVLNode<T> removeSuccessor(AVLNode<T> node, AVLNode<T> blank) {
+        if (node.getLeft() == null) {
+            blank.setData(node.getData());
+            return node.getRight();
+        } else {
+            node.setLeft(removeSuccessor(node.getLeft(), blank));
+            setHeightBalance(node);
         }
-        return predecessor(right);
+        return balance(node);
+    }
+
+    /**
+     * Balances a node in the tree
+     * @param node node to be balanced
+     * @return updated tree
+     */
+    private AVLNode<T> balance(AVLNode<T> node) {
+        setHeightBalance(node);
+        int balanceFactor = node.getBalanceFactor();
+
+        if (balanceFactor > 1) { // right rotation
+            if (node.getLeft().getBalanceFactor() < 0) {
+                node.setLeft(leftRotate(node.getLeft()));
+            }
+            return rightRotate(node);
+        } else if (balanceFactor < -1) {
+            if (node.getRight().getBalanceFactor() > 0) {
+                node.setRight(rightRotate(node.getRight()));
+            }
+            return leftRotate(node);
+        }
+        return node;
+    }
+
+    /**
+     * Performs a right rotation
+     * @param node node to start rotation from
+     * @return node to be shifted
+     */
+    private AVLNode<T> rightRotate(AVLNode<T> node) {
+        AVLNode<T> left = node.getLeft();
+        node.setLeft(left.getRight());
+        left.setRight(node);
+        setHeightBalance(node);
+        setHeightBalance(left);
+        return left;
+    }
+
+    /**
+     * Performs a left rotation
+     * @param node node to start rotation from
+     * @return node to be shifted
+     */
+    private AVLNode<T> leftRotate(AVLNode<T> node) {
+        AVLNode<T> right = node.getRight();
+        node.setRight(right.getLeft());
+        right.setLeft(node);
+        setHeightBalance(node);
+        setHeightBalance(right);
+        return right;
     }
 
     @Override
@@ -370,26 +317,21 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
      * @param node the node to set data for
      */
     private void setHeightBalance(AVLNode<T> node) {
-        int leftHeight = (node.getLeft() != null) ?
-            node.getLeft().getHeight() : -1;
-        int rightHeight = (node.getRight() != null) ?
-            node.getRight().getHeight() : -1;
-        node.setHeight(Math.max(leftHeight, rightHeight) + 1);
-        node.setBalanceFactor(leftHeight - rightHeight);
-    }
-
-    /**
-     * Sets the height and balance factor for a subtree
-     * @param node the current node in recursive calls
-     */
-    private void setHeightBalanceSub(AVLNode<T> node) {
-        if (root.getLeft() != null) {
-            setHeightBalanceSub(node.getLeft());
+        if (node.getLeft() == null && node.getRight() == null) {
+            node.setHeight(0);
+            node.setBalanceFactor(0);
+        } else if (node.getLeft() == null) {
+            node.setHeight(node.getRight().getHeight() + 1);
+            node.setBalanceFactor(-1 - node.getRight().getHeight());
+        } else if (node.getRight() == null) {
+            node.setHeight(node.getLeft().getHeight() + 1);
+            node.setBalanceFactor(node.getLeft().getHeight() + 1);
+        } else {
+            node.setHeight(Math.max(node.getLeft().getHeight(),
+                    node.getRight().getHeight()) + 1);
+            node.setBalanceFactor(node.getLeft().getHeight()
+                    - node.getRight().getHeight());
         }
-        if (root.getRight() != null) {
-            setHeightBalanceSub(node.getRight());
-        }
-        setHeightBalance(node);
     }
 
     @Override
