@@ -55,8 +55,7 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
         if (node == null) {
             size++;
             return new AVLNode<T>(data);
-        }
-        else {
+        } else {
             int compared = data.compareTo(node.getData());
             if (compared < 0) {
                 node.setLeft(addHelper(data, node.getLeft()));
@@ -91,25 +90,27 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
             );
         }
         int compared = data.compareTo(node.getData());
+        AVLNode<T> left = node.getLeft();
+        AVLNode<T> right = node.getRight();
         if (compared < 0) {
-            node.setLeft(removeHelper(data, node.getLeft(), empty));
+            node.setLeft(removeHelper(data, left, empty));
         } else if (compared > 0) {
-            node.setRight(removeHelper(data, node.getRight(), empty));
-        } else if (compared == 0) {
+            node.setRight(removeHelper(data, right, empty));
+        } else {
             size--;
             empty.setData(node.getData());
-            if (node.getRight() == null && node.getLeft() == null) {
+            if (right == null && left == null) {
                 setHeightBalance(node);
                 return null;
-            } else if (node.getRight() == null) {
+            } else if (right == null) {
                 setHeightBalance(node);
-                return node.getLeft();
-            } else if (node.getLeft() == null) {
+                return left;
+            } else if (left == null) {
                 setHeightBalance(node);
-                return node.getRight();
+                return right;
             } else {
                 AVLNode<T> blank = new AVLNode<>(null);
-                node.setRight(removeSuccessor(node.getRight(), blank));
+                node.setRight(successor(right, blank));
                 node.setData(blank.getData());
             }
         }
@@ -122,12 +123,12 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
      * @param blank node to store successor value
      * @return tree without successor
      */
-    private AVLNode<T> removeSuccessor(AVLNode<T> node, AVLNode<T> blank) {
+    private AVLNode<T> successor(AVLNode<T> node, AVLNode<T> blank) {
         if (node.getLeft() == null) {
             blank.setData(node.getData());
             return node.getRight();
         } else {
-            node.setLeft(removeSuccessor(node.getLeft(), blank));
+            node.setLeft(successor(node.getLeft(), blank));
             setHeightBalance(node);
         }
         return balance(node);
@@ -255,20 +256,32 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
         if (size < 2) {
             throw new NoSuchElementException("Not enough elements in tree.");
         }
-        return secondLargestHelper(root, root.getData());
+        return secondLargestHelper(root);
     }
 
     /**
      * Recursively finds the second largest element in the tree
      * @param node the current node in recursive calls
-     * @param data the previous value in recursive calls
      * @return the second largest element in the tree
      */
-    private T secondLargestHelper(AVLNode<T> node, T data) {
-        if (node.getRight() != null) {
-            return secondLargestHelper(node.getRight(), node.getData());
+    private T secondLargestHelper(AVLNode<T> node) {
+        AVLNode<T> left = node.getLeft();
+        AVLNode<T> right = node.getRight();
+        if (size == 2) {
+            if (right != null) {
+                return left.getData();
+            }
+            return node.getData();
         }
-        return data;
+        AVLNode<T> rightRight = right.getRight();
+        AVLNode<T> rightLeft = right.getLeft();
+        if (rightRight == null) {
+            if (rightLeft != null) {
+                return rightLeft.getData();
+            }
+            return node.getData();
+        }
+        return secondLargestHelper(right);
     }
 
     @Override
@@ -309,6 +322,9 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
 
     @Override
     public int height() {
+        if (root == null) {
+            return -1;
+        }
         return root.getHeight();
     }
 
@@ -317,20 +333,22 @@ public class AVL<T extends Comparable<? super T>> implements AVLInterface<T> {
      * @param node the node to set data for
      */
     private void setHeightBalance(AVLNode<T> node) {
-        if (node.getLeft() == null && node.getRight() == null) {
+        AVLNode<T> left = node.getLeft();
+        AVLNode<T> right = node.getRight();
+        if (left == null && right == null) {
             node.setHeight(0);
             node.setBalanceFactor(0);
-        } else if (node.getLeft() == null) {
-            node.setHeight(node.getRight().getHeight() + 1);
-            node.setBalanceFactor(-1 - node.getRight().getHeight());
-        } else if (node.getRight() == null) {
-            node.setHeight(node.getLeft().getHeight() + 1);
-            node.setBalanceFactor(node.getLeft().getHeight() + 1);
+        } else if (left == null) {
+            node.setHeight(right.getHeight() + 1);
+            node.setBalanceFactor(-1 - right.getHeight());
+        } else if (right == null) {
+            node.setHeight(left.getHeight() + 1);
+            node.setBalanceFactor(left.getHeight() + 1);
         } else {
-            node.setHeight(Math.max(node.getLeft().getHeight(),
-                    node.getRight().getHeight()) + 1);
-            node.setBalanceFactor(node.getLeft().getHeight()
-                    - node.getRight().getHeight());
+            node.setHeight(Math.max(left.getHeight(),
+                    right.getHeight()) + 1);
+            node.setBalanceFactor(left.getHeight()
+                    - right.getHeight());
         }
     }
 
