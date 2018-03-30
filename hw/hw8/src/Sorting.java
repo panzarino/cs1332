@@ -177,7 +177,37 @@ public class Sorting {
         if (arr == null || comparator == null || rand == null) {
             throw new IllegalArgumentException("Arguments cannot be null.");
         }
+        quickSortHelper(arr, 0, arr.length - 1, comparator, rand);
+    }
 
+    private static <T> void quickSortHelper(
+        T[] arr, int min, int max, Comparator<T> comparator, Random rand
+    ) {
+        if (min >= max) {
+            return;
+        }
+        int index = partition(arr, min, max, comparator, rand);
+        quickSortHelper(arr, min, index - 1, comparator, rand);
+        quickSortHelper(arr, index, max, comparator, rand);
+    }
+
+    private static <T> int partition(
+        T[] arr, int min, int max, Comparator<T> comparator, Random rand
+    ) {
+        int pivotIndex = rand.nextInt(max - min) + min;
+        T pivot = arr[pivotIndex];
+        while (min <= max) {
+            while (min <= max && comparator.compare(arr[min], pivot) < 0) {
+                min++;
+            }
+            while (min <= max && comparator.compare(arr[max], pivot) > 0) {
+                max--;
+            }
+            if (min <= max) {
+                swap(arr, min++, max--);
+            }
+        }
+        return min;
     }
 
     /**
@@ -224,12 +254,13 @@ public class Sorting {
     private static <T> void mergeSortHelper(
         T[] arr, int left, int right, Comparator<T> comparator
     ) {
-        if (left < right) {
-            int half = (left + right) / 2;
-            mergeSortHelper(arr, left, half, comparator);
-            mergeSortHelper(arr, half + 1, right, comparator);
-            merge(arr, left, half, right, comparator);
+        if (left >= right) {
+            return;
         }
+        int half = (left + right) / 2;
+        mergeSortHelper(arr, left, half, comparator);
+        mergeSortHelper(arr, half + 1, right, comparator);
+        merge(arr, left, half, right, comparator);
     }
 
     /**
