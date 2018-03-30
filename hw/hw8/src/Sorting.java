@@ -85,7 +85,21 @@ public class Sorting {
      * @param comparator the Comparator used to compare the data in arr
      */
     public static <T> void insertionSort(T[] arr, Comparator<T> comparator) {
-
+        if (arr == null || comparator == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
+        }
+        for (int x = 1; x < arr.length; x++) {
+            T value = arr[x];
+            int i;
+            for (
+                i = x - 1;
+                i >= 0 && comparator.compare(arr[i], value) > 0;
+                i--
+            ) {
+                arr[i + 1] = arr[i];
+            }
+            arr[i + 1] = value;
+        }
     }
 
     /**
@@ -111,7 +125,18 @@ public class Sorting {
      * @param comparator the Comparator used to compare the data in arr
      */
     public static <T> void selectionSort(T[] arr, Comparator<T> comparator) {
-
+        if (arr == null || comparator == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
+        }
+        for (int x = 0; x < arr.length - 1; x++) {
+            int min = x;
+            for (int i = x + 1; i < arr.length; i++) {
+                if (comparator.compare(arr[i], arr[i + 1]) > 0) {
+                    min = x;
+                }
+            }
+            swap(arr, x, min);
+        }
     }
 
     /**
@@ -149,6 +174,9 @@ public class Sorting {
      */
     public static <T> void quickSort(T[] arr, Comparator<T> comparator,
                                      Random rand) {
+        if (arr == null || comparator == null || rand == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
+        }
 
     }
 
@@ -179,7 +207,70 @@ public class Sorting {
      * @param comparator the Comparator used to compare the data in arr
      */
     public static <T> void mergeSort(T[] arr, Comparator<T> comparator) {
+        if (arr == null || comparator == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
+        }
+        mergeSortHelper(arr, 0, arr.length - 1, comparator);
+    }
 
+    /**
+     * Recursively performs a merge sort
+     * @param arr array to operate on
+     * @param left leftmost index for iteration
+     * @param right rightmost index for iteration
+     * @param comparator the Comparator used to compare the data in arr
+     * @param <T> data type to sort
+     */
+    private static <T> void mergeSortHelper(
+        T[] arr, int left, int right, Comparator<T> comparator
+    ) {
+        if (left < right) {
+            int half = (left + right) / 2;
+            mergeSortHelper(arr, left, half, comparator);
+            mergeSortHelper(arr, half + 1, right, comparator);
+            merge(arr, left, half, right, comparator);
+        }
+    }
+
+    /**
+     * Merges two halves of the array
+     * @param arr array to operate on
+     * @param left leftmost index for merging
+     * @param half index halfway between left and right
+     * @param right rightmost index for merging
+     * @param comparator the Comparator used to compare the data in arr
+     * @param <T> data type to merge
+     */
+    private static <T> void merge(
+        T[] arr, int left, int half, int right, Comparator<T> comparator
+    ) {
+        int leftSize = half - left + 1;
+        int rightSize = right - half;
+        T[] leftArray = (T[]) (new Object[leftSize]);
+        T[] rightArray = (T[]) (new Object[rightSize]);
+        for (int i = 0; i < leftSize; i++) {
+            leftArray[i] = arr[left + i];
+        }
+        for (int i = 0; i < rightSize; i++) {
+            rightArray[i] = arr[half + i + 1];
+        }
+        int leftIndex = 0;
+        int rightIndex = 0;
+        int i = left;
+        while (leftIndex < leftSize && rightIndex < rightSize) {
+            if (comparator.compare(leftArray[leftIndex],
+                rightArray[rightIndex]) <= 0) {
+                arr[i++] = leftArray[leftIndex++];
+            } else {
+                arr[i++] = rightArray[rightIndex++];
+            }
+        }
+        while (leftIndex < leftSize) {
+            arr[i++] = leftArray[leftIndex++];
+        }
+        while (rightIndex < rightSize) {
+            arr[i++] = rightArray[rightIndex++];
+        }
     }
 
     /**
