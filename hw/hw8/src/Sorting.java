@@ -132,7 +132,7 @@ public class Sorting {
         for (int x = 0; x < arr.length - 1; x++) {
             int min = x;
             for (int i = x + 1; i < arr.length; i++) {
-                if (comparator.compare(arr[i], arr[i + 1]) > 0) {
+                if (comparator.compare(arr[i], arr[min]) > 0) {
                     min = x;
                 }
             }
@@ -375,7 +375,7 @@ public class Sorting {
                 int value = arr[i];
                 int digit =
                     (int) ((value % Math.pow(10, x)) / Math.pow(10, x - 1));
-                buckets[digit].add(value);
+                buckets[Math.abs(digit)].add(value);
             }
             int index = 0;
             for (int i = 0; i < buckets.length; i++) {
