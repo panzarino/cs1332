@@ -1,4 +1,5 @@
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.Random;
 
 /**
@@ -180,6 +181,15 @@ public class Sorting {
         quickSortHelper(arr, 0, arr.length - 1, comparator, rand);
     }
 
+    /**
+     * Recursively performs a quicksort
+     * @param arr array to be sorted
+     * @param min minimum index in recursive calls
+     * @param max maximum index in recursive calls
+     * @param comparator the Comparator used to compare the data in arr
+     * @param rand the Random object used to select pivots
+     * @param <T> data type to sort
+     */
     private static <T> void quickSortHelper(
         T[] arr, int min, int max, Comparator<T> comparator, Random rand
     ) {
@@ -191,6 +201,16 @@ public class Sorting {
         quickSortHelper(arr, index, max, comparator, rand);
     }
 
+    /**
+     * Moves items around a random pivot and returns partition index
+     * @param arr array to be sorted
+     * @param min minimum index in recursive calls
+     * @param max maximum index in recursive calls
+     * @param comparator the Comparator used to compare the data in arr
+     * @param rand the Random object used to select pivots
+     * @param <T> data type to sort
+     * @return partition index
+     */
     private static <T> int partition(
         T[] arr, int min, int max, Comparator<T> comparator, Random rand
     ) {
@@ -329,7 +349,42 @@ public class Sorting {
      * @param arr the array to be sorted
      */
     public static void lsdRadixSort(int[] arr) {
-
+        if (arr == null) {
+            throw new IllegalArgumentException("Array cannot be null.");
+        }
+        LinkedList[] buckets = new LinkedList[10];
+        buckets[0] = new LinkedList<Integer>();
+        buckets[1] = new LinkedList<Integer>();
+        buckets[2] = new LinkedList<Integer>();
+        buckets[3] = new LinkedList<Integer>();
+        buckets[4] = new LinkedList<Integer>();
+        buckets[5] = new LinkedList<Integer>();
+        buckets[6] = new LinkedList<Integer>();
+        buckets[7] = new LinkedList<Integer>();
+        buckets[8] = new LinkedList<Integer>();
+        buckets[9] = new LinkedList<Integer>();
+        int iterations = 0;
+        for (int x : arr) {
+            int length = (int) (Math.log10(x) + 1);
+            if (length > iterations) {
+                iterations = length;
+            }
+        }
+        for (int x = 1; x <= iterations; x++) {
+            for (int i = 0; i < arr.length; i++) {
+                int value = arr[i];
+                int digit =
+                    (int) ((value % Math.pow(10, x)) / Math.pow(10, x - 1));
+                buckets[digit].add(value);
+            }
+            int index = 0;
+            for (int i = 0; i < buckets.length; i++) {
+                LinkedList<Integer> bucket = buckets[i];
+                while (bucket.size() != 0) {
+                    arr[index++] = bucket.remove();
+                }
+            }
+        }
     }
 
     /**
