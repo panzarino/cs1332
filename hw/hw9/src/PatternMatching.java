@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,30 @@ public class PatternMatching {
      */
     public static List<Integer> bruteForce(CharSequence pattern,
         CharSequence text, CharacterComparator comparator) {
-
+        if (pattern == null || pattern.length() == 0) {
+            throw new IllegalArgumentException("Pattern cannot be null or empty.");
+        }
+        if (text == null) {
+            throw new IllegalArgumentException("Text cannot be null.");
+        }
+        if (comparator == null) {
+            throw new IllegalArgumentException("Comparator cannot be null.");
+        }
+        List<Integer> output = new LinkedList<Integer>();
+        for (int i = 0; i < text.length() - pattern.length() + 1; i++) {
+            boolean match = true;
+            for (int x = 0; x < pattern.length() && match; x++) {
+                if (comparator.compare(
+                    pattern.charAt(x),
+                    text.charAt(x + i)) != 0) {
+                    match = false;
+                }
+            }
+            if (match) {
+                output.add(i);
+            }
+        }
+        return output;
     }
 
     /**
@@ -44,7 +68,7 @@ public class PatternMatching {
      */
     public static List<Integer> kmp(CharSequence pattern, CharSequence text,
                                     CharacterComparator comparator) {
-
+        return null;
     }
 
     /**
@@ -75,7 +99,7 @@ public class PatternMatching {
      */
     public static int[] buildFailureTable(CharSequence pattern,
                                           CharacterComparator comparator) {
-
+        return null;
     }
 
     /**
@@ -94,7 +118,7 @@ public class PatternMatching {
      */
     public static List<Integer> boyerMoore(CharSequence pattern,
                        CharSequence text, CharacterComparator comparator) {
-
+        return null;
     }
 
     /**
@@ -124,7 +148,7 @@ public class PatternMatching {
      *         to their last occurrence in the pattern
      */
     public static Map<Character, Integer> buildLastTable(CharSequence pattern) {
-
+        return null;
     }
 
 }
