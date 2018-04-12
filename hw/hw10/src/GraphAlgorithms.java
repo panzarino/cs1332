@@ -1,5 +1,8 @@
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -40,7 +43,29 @@ public class GraphAlgorithms {
      */
     public static <T> List<Vertex<T>> breadthFirstSearch(Vertex<T> start,
                                             Graph<T> graph) {
-
+        if (start == null) {
+            throw new IllegalArgumentException("Start cannot be null.");
+        }
+        if (graph == null) {
+            throw new IllegalArgumentException("Graph cannot be null.");
+        }
+        Map<Vertex<T>, List<Edge<T>>> list = graph.getAdjList();
+        if (!list.containsKey(start)) {
+            throw new IllegalArgumentException("Start is not in graph.");
+        }
+        List<Vertex<T>> output = new LinkedList<Vertex<T>>();
+        Queue<Vertex<T>> queue = new LinkedList<Vertex<T>>();
+        output.add(start);
+        queue.add(start);
+        while (!output.isEmpty()) {
+            for (Edge<T> edge : list.get(queue.remove())) {
+                if (!output.contains(edge.getV())) {
+                    queue.add(edge.getV());
+                    output.add(edge.getV());
+                }
+            }
+        }
+        return output;
     }
 
 
@@ -74,7 +99,41 @@ public class GraphAlgorithms {
      */
     public static <T> List<Vertex<T>> depthFirstSearch(Vertex<T> start,
                                             Graph<T> graph) {
+        if (start == null) {
+            throw new IllegalArgumentException("Start cannot be null.");
+        }
+        if (graph == null) {
+            throw new IllegalArgumentException("Graph cannot be null.");
+        }
+        Map<Vertex<T>, List<Edge<T>>> list = graph.getAdjList();
+        if (!list.containsKey(start)) {
+            throw new IllegalArgumentException("Start is not in graph.");
+        }
+        List<Vertex<T>> output = new LinkedList<Vertex<T>>();
+        Set<Vertex<T>> explored = new HashSet<Vertex<T>>();
+        depthFirstSearchHelper(list, start, explored, output);
+        return output;
+    }
 
+    /**
+     * Recursive helper method for depth first search
+     * @param list List of edges from graph
+     * @param current Current vertex in recursive calls
+     * @param explored Set of explored vertices
+     * @param output Set of vertices to be returned
+     * @param <T> the generic typing of the data
+     */
+    private static <T> void depthFirstSearchHelper(
+        Map<Vertex<T>, List<Edge<T>>> list, Vertex<T> current,
+        Set<Vertex<T>> explored, List<Vertex<T>> output
+    ) {
+        if (!explored.contains(current)) {
+            output.add(current);
+            explored.add(current);
+            for (Edge<T> edge : list.get(current)) {
+                depthFirstSearchHelper(list, edge.getV(), explored, output);
+            }
+        }
     }
 
 
@@ -109,7 +168,7 @@ public class GraphAlgorithms {
      */
     public static <T> Map<Vertex<T>, Integer> dijkstras(Vertex<T> start,
                                                       Graph<T> graph) {
-
+        
     }
 
 
