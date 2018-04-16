@@ -1,7 +1,9 @@
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -168,7 +170,45 @@ public class GraphAlgorithms {
      */
     public static <T> Map<Vertex<T>, Integer> dijkstras(Vertex<T> start,
                                                       Graph<T> graph) {
-        
+        if (start == null) {
+            throw new IllegalArgumentException("Start cannot be null.");
+        }
+        if (graph == null) {
+            throw new IllegalArgumentException("Graph cannot be null.");
+        }
+        Map<Vertex<T>, List<Edge<T>>> list = graph.getAdjList();
+        if (!list.containsKey(start)) {
+            throw new IllegalArgumentException("Start is not in graph.");
+        }
+        Set<Vertex<T>> explored = new HashSet<Vertex<T>>();
+        Map<Vertex<T>, Integer> output = new HashMap<Vertex<T>, Integer>();
+        for (Vertex<T> vertex : list.keySet()) {
+            output.put(vertex, Integer.MAX_VALUE);
+        }
+        PriorityQueue<Edge<T>> queue = new PriorityQueue<Edge<T>>();
+        queue.add(new Edge<T>(start, start, 0));
+        int distance = 0;
+        while (!queue.isEmpty()) {
+            Edge<T> edge = queue.poll();
+            Vertex<T> vertex = edge.getV();
+            if (!explored.contains(vertex)) {
+                explored.add(vertex);
+                if (output.get(edge.getU()) != Integer.MAX_VALUE) {
+                    distance = output.get(edge.getU());
+                }
+                for (Edge<T> e : list.get(vertex)) {
+                    if (
+                        !explored.contains(e.getV())
+                            && distance + edge.getWeight()
+                            < output.get(edge.getV())
+                    ) {
+                        queue.add(e);
+                    }
+                }
+                output.put(vertex, distance + edge.getWeight());
+            }
+        }
+        return output;
     }
 
 
@@ -208,6 +248,35 @@ public class GraphAlgorithms {
      * @return the MST of the graph or null if there is no valid MST
      */
     public static <T> Set<Edge<T>> prims(Vertex<T> start, Graph<T> graph) {
-
+        if (start == null) {
+            throw new IllegalArgumentException("Start cannot be null.");
+        }
+        if (graph == null) {
+            throw new IllegalArgumentException("Graph cannot be null.");
+        }
+        Map<Vertex<T>, List<Edge<T>>> list = graph.getAdjList();
+        if (!list.containsKey(start)) {
+            throw new IllegalArgumentException("Start is not in graph.");
+        }
+        Set<Edge<T>> output = new HashSet<Edge<T>>();
+        Set<Vertex<T>> explored = new HashSet<Vertex<T>>();
+        PriorityQueue<Edge<T>> queue = new PriorityQueue<Edge<T>>();
+        while (output.size() != list.size() - 1) {
+            List<Edge<T>> edges = list.get(start);
+            for (Edge<T> edge : edges) {
+                Vertex<T> vertex = edge.getV();
+                if (!explored.contains(vertex)) {
+                    queue.add(new Edge<T>(start, vertex, edge.getWeight()));
+                }
+            }
+            if (!queue.isEmpty()) {
+                Edge<T> edge = queue.poll();
+                output.add(edge);
+                explored.add(edge.getU());
+                explored.add(edge.getV());
+                start = edge.getV();
+            }
+        }
+        return output;
     }
 }
