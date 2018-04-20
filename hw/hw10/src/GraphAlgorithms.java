@@ -59,7 +59,7 @@ public class GraphAlgorithms {
         Queue<Vertex<T>> queue = new LinkedList<Vertex<T>>();
         output.add(start);
         queue.add(start);
-        while (!output.isEmpty()) {
+        while (!queue.isEmpty()) {
             for (Edge<T> edge : list.get(queue.remove())) {
                 if (!output.contains(edge.getV())) {
                     queue.add(edge.getV());
@@ -258,25 +258,45 @@ public class GraphAlgorithms {
         if (!list.containsKey(start)) {
             throw new IllegalArgumentException("Start is not in graph.");
         }
-        Set<Edge<T>> output = new HashSet<Edge<T>>();
         Set<Vertex<T>> explored = new HashSet<Vertex<T>>();
-        PriorityQueue<Edge<T>> queue = new PriorityQueue<Edge<T>>();
-        while (output.size() != list.size() - 1) {
-            List<Edge<T>> edges = list.get(start);
-            for (Edge<T> edge : edges) {
-                Vertex<T> vertex = edge.getV();
-                if (!explored.contains(vertex)) {
-                    queue.add(new Edge<T>(start, vertex, edge.getWeight()));
+        explored.add(start);
+        PriorityQueue<Edge<T>> queue = new PriorityQueue<Edge<T>>(
+                graph.getEdges());
+        Set<Edge<T>> output = new HashSet<Edge<T>>();
+        boolean disconnected = false;
+        while (!disconnected && explored.size() != graph.getVertices().size()) {
+            Edge<T> toBeRemoved = null;
+            boolean canBeChanged = true;
+            for (Edge<T> edge : queue) {
+                if (canBeChanged && explored.contains(edge.getU())
+                        && !(explored.contains(edge.getU())
+                        && explored.contains(edge.getV()))) {
+                    explored.add(edge.getV());
+                    output.add(edge);
+                    output.add(new Edge<T>(edge.getV(), edge.getU(),
+                            edge.getWeight()));
+                    toBeRemoved = edge;
+                    canBeChanged = false;
+                } else if (canBeChanged && explored.contains(edge.getV())
+                        && !(explored.contains(edge.getU())
+                        && explored.contains(edge.getV()))) {
+                    explored.add(edge.getU());
+                    output.add(edge);
+                    output.add(new Edge<T>(edge.getV(), edge.getU(),
+                            edge.getWeight()));
+                    toBeRemoved = edge;
+                    canBeChanged = false;
                 }
             }
-            if (!queue.isEmpty()) {
-                Edge<T> edge = queue.poll();
-                output.add(edge);
-                explored.add(edge.getU());
-                explored.add(edge.getV());
-                start = edge.getV();
+            queue.remove(toBeRemoved);
+            if (toBeRemoved == null) {
+                disconnected = true;
             }
         }
-        return output;
+        if (disconnected) {
+            return null;
+        } else {
+            return output;
+        }
     }
 }
